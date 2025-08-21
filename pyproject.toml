@@ -45,7 +45,7 @@ build-backend = "setuptools.build_meta"
 
 [tool.setuptools.packages.find]
 where = ["src"]
-include = ["simple_scraper*"]
+include = ["pw-simple_scraper*"]
 exclude = ["tests*", "examples*"]
 
 [tool.pytest.ini_options]

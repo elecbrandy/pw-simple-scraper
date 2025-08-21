@@ -9,9 +9,9 @@ from .browser import launch_chromium
 
 # strategies to try in order
 _STRATEGY_PATHS = [
-	"simple_scraper.strategies.stealth",
-	"simple_scraper.strategies.mobile",
-	"simple_scraper.strategies.proxy",
+	"pw-simple_scraper.strategies.stealth",
+	"pw-simple_scraper.strategies.mobile",
+	"pw-simple_scraper.strategies.proxy",
 ]
 
 async def _run_strategies(

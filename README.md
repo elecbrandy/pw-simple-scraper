@@ -43,7 +43,7 @@ pip install pw-simple-scraper
 ## Usage
 
 ```python
-from simple_scraper import scrape_context, scrape_href
+from pw-simple_scraper import scrape_context, scrape_href
 
 # Extract text
 res = scrape_context("https://example.com", "h3")

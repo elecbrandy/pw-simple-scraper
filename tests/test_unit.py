@@ -1,7 +1,7 @@
 import pytest
-from simple_scraper.core import scrape_context
-from simple_scraper.model import ScrapeResult
-from simple_scraper import utils
+from pw-simple_scraper.core import scrape_context
+from pw-simple_scraper.model import ScrapeResult
+from pw-simple_scraper import utils
 
 def test_validation_errors():
     with pytest.raises(TypeError):
