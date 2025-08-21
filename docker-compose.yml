@@ -1,5 +1,5 @@
 services:
-  simple-scraper-test:
+  pw-simple-scraper-test:
     build:
       context: .
       dockerfile: Dockerfile

@@ -1,19 +1,19 @@
-# simple-scraper
+# pw-simple-scraper
 
 > A lightweight, easy-to-use web scraper built with Python and Playwright
 
 
 [한국어 보러가기](./README_kr.md)
 
-[![PyPI](https://img.shields.io/pypi/v/simple-scraper.svg)](https://pypi.org/project/simple-scraper/)
-[![Python](https://img.shields.io/pypi/pyversions/simple-scraper.svg)](https://pypi.org/project/simple-scraper/)
+[![PyPI](https://img.shields.io/pypi/v/pw-simple-scraper.svg)](https://pypi.org/project/pw-simple-scraper/)
+[![Python](https://img.shields.io/pypi/pyversions/pw-simple-scraper.svg)](https://pypi.org/project/pw-simple-scraper/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](#license)
 
 <br>
 
 ## Overview
 
-* `simple-scraper` scrapes desired elements from a web page.
+* `pw-simple-scraper` scrapes desired elements from a web page.
 * Provide a `URL + CSS` selector, and it will return the matching elements as a list of strings.
 * The result is wrapped in a `ScrapeResult` object. You can access the extracted values via **`.result` (List\[str])**.
 
@@ -32,8 +32,8 @@ python -m playwright install chromium
 # 2-2. Install Chromium (Linux)
 python -m playwright install --with-deps chromium
 
-# 3. Install simple-scraper
-pip install simple-scraper
+# 3. Install pw-simple-scraper
+pip install pw-simple-scraper
 ```
 
 * Since this scraper is built on top of `Playwright`, both the `Playwright` library and the `Chromium` browser are required.
@@ -76,26 +76,20 @@ class ScrapeResult:
 
 ## FAQ
 
-#### Installed but browser fails to launch
+- **Installed but browser fails to launch**
+    - You must install the browser with `python -m playwright install chromium` (Be mindful of the Linux `--with-deps` option.)
 
-You must install the browser with `python -m playwright install chromium` (Be mindful of the Linux `--with-deps` option.)
+- **RuntimeError: All strategies failed**
+    - This may happen if the selector doesn’t exist or the page loads slowly. **Double-check your selector** and try increasing the `timeout`.
 
-#### `RuntimeError: All strategies failed`
+- **Scraping inside iframe**
+    - Planned for future support.
 
-This may happen if the selector doesn’t exist or the page loads slowly.
-**Double-check your selector** and try increasing the `timeout`.
+- **xpath support**
+    - Planned for future support.
 
-#### Scraping inside `iframe`
-
-Planned for future support.
-
-#### `xpath` support
-
-Planned for future support.
-
-#### `robot.txt` support
-
-Will be added as a configurable option in the future.
+- **robot.txt support**
+    - Will be added as a configurable option in the future.
 
 <br>
 <br>
