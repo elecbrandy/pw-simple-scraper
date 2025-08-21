@@ -1,0 +1,63 @@
+[project]
+name = "simple-scraper"
+dynamic = ["version"]
+description = "A simple and light Playwright-based scraper"
+authors = [
+    { name = "elecbrandy", email = "elecbrandy@gmail.com" }
+]
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.9"
+dependencies = [
+    "playwright>=1.44",
+    "nest_asyncio>=1.5.6"
+]
+keywords = ["playwright", "scraping", "web-scraping", "automation", "crawler"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Internet :: WWW/HTTP",
+    "Topic :: Software Development :: Libraries :: Python Modules"
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "black",
+    "isort"
+]
+
+[project.urls]
+Homepage = "https://github.com/elecbrandy/simple-scraper"
+Repository = "https://github.com/elecbrandy/simple-scraper"
+Issues = "https://github.com/elecbrandy/simple-scraper/issues"
+
+[build-system]
+requires = ["setuptools>=61", "wheel", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["simple_scraper*"]
+exclude = ["tests*", "examples*"]
+
+[tool.pytest.ini_options]
+addopts = "-q"
+testpaths = ["tests"]
+markers = [
+  "e2e: end-to-end tests that launch a browser (slow)",
+]
+filterwarnings = [
+  "ignore::DeprecationWarning",
+]
+
+[tool.setuptools_scm]
+version_scheme = "guess-next-dev"
+local_scheme = "no-local-version"

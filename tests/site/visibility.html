@@ -1,0 +1,8 @@
+<!doctype html><meta charset="utf-8"><title>Visibility</title>
+<style>.hidden{display:none}</style>
+<div class="msg hidden">I will appear</div>
+<script>
+  setTimeout(() => {
+    document.querySelector('.msg').classList.remove('hidden');
+  }, 500);
+</script>

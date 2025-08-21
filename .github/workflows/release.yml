@@ -1,0 +1,68 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    environment: pypi
+
+    env:
+      # headless_shell 강제 사용 방지
+      PW_CHROMIUM_USE_HEADLESS_SHELL: "0"
+      PLAYWRIGHT_CHROMIUM_USE_HEADLESS_SHELL: "0"
+      # (옵션) 채널 강제하고 싶으면 chrome 지정, 기본은 빈 값
+      PW_CHANNEL: ""
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Upgrade pip and install build tools
+        shell: bash
+        run: |
+          python -m pip install -U pip
+          python -m pip install build
+
+      - name: Install package (dev)
+        shell: bash
+        run: |
+          python -m pip install ".[dev]"
+
+      # 브라우저와 OS deps를 한 번에 설치 (chromium 기본 + chrome 채널도 함께 설치해둠)
+      - name: Install Playwright browsers (with OS deps)
+        shell: bash
+        run: |
+          python -m pip install playwright
+          python -m playwright install --with-deps chromium chrome
+          python -m playwright --version
+          ls -R /home/runner/.cache/ms-playwright/ || true
+
+      - name: Run tests
+        shell: bash
+        run: pytest -q
+
+      - name: Build sdist and wheel
+        shell: bash
+        run: python -m build
+
+      - name: Publish to PyPI via OIDC
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          skip-existing: true

@@ -1,0 +1,15 @@
+<!doctype html><meta charset="utf-8"><title>Dynamic Insert</title>
+<ul id="list"></ul>
+<script>
+  window.addEventListener('DOMContentLoaded', () => {
+    setTimeout(() => {
+      const ul = document.getElementById('list');
+      ["One","Two","Three"].forEach(t => {
+        const li = document.createElement('li');
+        li.className = 'item';
+        li.textContent = t;
+        ul.appendChild(li);
+      });
+    }, 600);
+  });
+</script>

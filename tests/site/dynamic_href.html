@@ -1,0 +1,11 @@
+<!doctype html><meta charset="utf-8"><title>Dynamic Href</title>
+<nav id="nav"></nav>
+<script>
+  setTimeout(()=>{
+    const a = document.createElement('a');
+    a.className = 'later';
+    a.textContent = 'Go';
+    a.href = '/a.html';    // 생성 시점에 href 이미 존재
+    document.getElementById('nav').appendChild(a);
+  }, 500);
+</script>

@@ -1,0 +1,10 @@
+<!doctype html><meta charset="utf-8"><title>Dynamic</title>
+<div id="app"></div>
+<script>
+  setTimeout(() => {
+    const el = document.createElement('div');
+    el.id = 'late';
+    el.textContent = 'I came late';
+    document.getElementById('app').appendChild(el);
+  }, 600);
+</script>

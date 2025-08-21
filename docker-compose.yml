@@ -1,0 +1,13 @@
+services:
+  simple-scraper-test:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/app
+    environment:
+      # GitHub Actions env set
+      - CI=true
+      - GITHUB_ACTIONS=true
+      - PW_CHROMIUM_USE_HEADLESS_SHELL=0
+      - PLAYWRIGHT_CHROMIUM_USE_HEADLESS_SHELL=0
