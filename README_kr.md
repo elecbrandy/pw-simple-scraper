@@ -41,7 +41,7 @@ pip install pw-simple-scraper
 ## 사용법
 
 ``` python
-from pw-simple_scraper import scrape_context, scrape_href
+from pw_simple_scraper import scrape_context, scrape_href
 
 # 텍스트 추출
 res = scrape_context("https://example.com", "h3")

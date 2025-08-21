@@ -1,5 +1,5 @@
 import pytest
-from pw-simple_scraper import scrape_context, scrape_href
+from pw_simple_scraper import scrape_context, scrape_href
 
 # 이 파일 전체를 e2e로 표시 (브라우저 실행 필요)
 pytestmark = pytest.mark.e2e
