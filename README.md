@@ -2,12 +2,11 @@
 
 > A lightweight, easy-to-use web scraper built with Python and Playwright
 
-
-[한국어 보러가기](./README_kr.md)
-
 [![PyPI](https://img.shields.io/pypi/v/pw-simple-scraper.svg)](https://pypi.org/project/pw-simple-scraper/)
 [![Python](https://img.shields.io/pypi/pyversions/pw-simple-scraper.svg)](https://pypi.org/project/pw-simple-scraper/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](#license)
+
+[한국어 보러가기](./README_kr.md)
 
 <br>
 
