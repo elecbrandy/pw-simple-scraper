@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-SERVICE="simple-scraper-test"
+SERVICE="pw-simple-scraper-test"
 DC="${DC:-docker compose}"
 
 REBUILD=false
