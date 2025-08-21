@@ -1,18 +1,20 @@
-FROM mcr.microsoft.com/playwright:latest
+FROM python:3.11-slim
+
+ENV DEBIAN_FRONTEND=noninteractive \
+    PIP_NO_CACHE_DIR=1
 
 WORKDIR /app
 
-RUN apt-get update \
-    && apt-get install -y python3-pip \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ca-certificates curl git \
+  && rm -rf /var/lib/apt/lists/*
 
-RUN python3 -m pip install --no-cache-dir -U pip setuptools
+COPY . /app
 
-COPY pyproject.toml ./
-RUN python3 -m pip install ".[dev]"
+RUN python -m pip install -U pip setuptools wheel \
+ && python -m pip install ".[dev]" \
+ && python -m pip install playwright
 
-COPY src/ /app/src/
-COPY tests/ /app/tests/
+RUN python -m playwright install --with-deps chromium
 
-CMD ["pytest", "-q"]
+CMD ["pytest", "-q]

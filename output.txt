@@ -28,10 +28,16 @@ proxy.py
 stealth.py
 
 ./tests:
+__pycache__
 conftest.py
 site
 test_intergration_site.py
 test_unit.py
+
+./tests/__pycache__:
+conftest.cpython-310-pytest-8.4.1.pyc
+test_intergration_site.cpython-310-pytest-8.4.1.pyc
+test_unit.cpython-310-pytest-8.4.1.pyc
 
 ./tests/site:
 attrs_mixed.html
@@ -187,7 +193,7 @@ filterwarnings = [
 [tool.setuptools_scm]
 version_scheme = "guess-next-dev"
 local_scheme = "no-local-version"
-
+fallback_version = "0.0.0"
 ```
 
 ```
@@ -927,10 +933,8 @@ def test_utils_headers_and_uapool():
 ```
 ./docker-compose.yml
 
-version: '3.8'
-
 services:
-  my-app:
+  simple-scraper-test:
     build:
       context: .
       dockerfile: Dockerfile
@@ -947,15 +951,100 @@ services:
 ```
 ./dockerfile
 
+# 파이썬 3.11 슬림 이미지를 기반으로 사용
 FROM python:3.11-slim
 
+# 작업 디렉토리를 /app으로 설정
 WORKDIR /app
 
+# Playwright와 웹 브라우저 실행에 필요한 시스템 종속성 설치
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    # 필요한 브라우저 종속성
+    libwoff1 \
+    libharfbuzz-icu8 \
+    libjpeg62-turbo-dev \
+    libpng16-16 \
+    libgdk-pixbuf-xlib-2.0-0 \
+    libatk-bridge2.0-0 \
+    libdbus-1-3 \
+    libgtk-3-0 \
+    libasound2 \
+    libxkbcommon0 \
+    libgbm1 \
+    libnss3 \
+    libxshmfence1 \
+    fonts-noto-cjk \
+    procps \
+    curl \
+    unzip \
+    # apt 캐시 정리
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# 모든 프로젝트 파일을 컨테이너로 복사
 COPY . /app
 
-RUN python -m pip install --no-cache-dir ".[dev]" && \
-    python -m pip install --no-cache-dir playwright && \
-    python -m playwright install --with-deps chromium chrome
+# pip 및 setuptools 업데이트
+RUN python3 -m pip install --no-cache-dir -U pip setuptools
 
+# 프로젝트 의존성 설치
+RUN python3 -m pip install ".[dev]"
+
+# Playwright에 맞는 브라우저를 다운로드
+RUN python3 -m playwright install --with-deps chromium chrome
+
+# 테스트 명령어 설정
+CMD ["pytest", "-q"]
+```
+
+```
+./.pytest_cache/CACHEDIR.TAG
+
+Signature: 8a477f597d28d172789f06886806bc55
+# This file is a cache directory tag created by pytest.
+# For information about cache directory tags, see:
+#	https://bford.info/cachedir/spec.html
+
+```
+
+```
+./.pytest_cache/v/cache/nodeids
+
+[
+  "tests/test_intergration_site.py::test_attrs_mixed_href_filter",
+  "tests/test_intergration_site.py::test_dynamic_href_added_later",
+  "tests/test_intergration_site.py::test_dynamic_list_insert",
+  "tests/test_intergration_site.py::test_dynamic_wait_visible_after_insert",
+  "tests/test_intergration_site.py::test_empty_text_is_filtered_and_empty_href_ignored",
+  "tests/test_intergration_site.py::test_encoding_utf8_paragraphs",
+  "tests/test_intergration_site.py::test_index_list_extraction",
+  "tests/test_intergration_site.py::test_links_href_extraction",
+  "tests/test_intergration_site.py::test_longlist_count_and_edges",
+  "tests/test_intergration_site.py::test_missing_selector_raises",
+  "tests/test_intergration_site.py::test_nested_headlines_text_and_links",
+  "tests/test_intergration_site.py::test_visibility_toggle",
+  "tests/test_unit.py::test_model_to_dict",
+  "tests/test_unit.py::test_utils_headers_and_uapool",
+  "tests/test_unit.py::test_validation_errors"
+]
+```
+
+```
+./.pytest_cache/v/cache/lastfailed
+
+{
+  "tests/test_intergration_site.py::test_index_list_extraction": true,
+  "tests/test_intergration_site.py::test_links_href_extraction": true,
+  "tests/test_intergration_site.py::test_dynamic_wait_visible_after_insert": true,
+  "tests/test_intergration_site.py::test_dynamic_list_insert": true,
+  "tests/test_intergration_site.py::test_dynamic_href_added_later": true,
+  "tests/test_intergration_site.py::test_attrs_mixed_href_filter": true,
+  "tests/test_intergration_site.py::test_empty_text_is_filtered_and_empty_href_ignored": true,
+  "tests/test_intergration_site.py::test_encoding_utf8_paragraphs": true,
+  "tests/test_intergration_site.py::test_longlist_count_and_edges": true,
+  "tests/test_intergration_site.py::test_nested_headlines_text_and_links": true,
+  "tests/test_intergration_site.py::test_visibility_toggle": true,
+  "tests/test_intergration_site.py::test_missing_selector_raises": true
+}
 ```
 
