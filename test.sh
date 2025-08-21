@@ -1,12 +1,30 @@
-docker-compose up --build -d
+#!/usr/bin/env bash
+set -euo pipefail
 
-echo "Running tests in Docker container..."
-docker-compose exec -T simple-scraper-test pytest -q
+SERVICE="simple-scraper-test"
+DC="${DC:-docker compose}"
 
-if [ $? -eq 0 ]; then
-  echo "All tests passed successfully!"
-  exit 0
-else
-  echo "Tests failed."
-  exit 1
+REBUILD=false
+if [[ "${1:-}" == "--rebuild" ]]; then
+  REBUILD=true
 fi
+
+if $REBUILD; then
+  echo "[INFO] Rebuilding image..."
+  $DC build "$SERVICE"
+else
+  echo "[INFO] Checking for existing image..."
+  IMG_ID="$($DC images --quiet "$SERVICE" || true)"
+  if [[ -z "$IMG_ID" ]]; then
+    echo "[INFO] No image found. Building..."
+    $DC build "$SERVICE"
+  else
+    echo "[INFO] Reusing existing image: $IMG_ID"
+  fi
+fi
+
+echo "[INFO] Running tests..."
+exec $DC run --rm \
+  -e PYTEST_ADDOPTS="" \
+  "$SERVICE" \
+  pytest -vv -ra -s
