@@ -1,3 +1,4 @@
+import re
 import random
 from typing import List, Optional
 from playwright.async_api import Browser
@@ -25,7 +26,8 @@ async def run(
         page = await ctx.new_page()
         await page.goto(url, wait_until="load", timeout=timeout)
         await simulate_human(page)
-        await page.wait_for_selector(selector, state="attached", timeout=timeout)
+        
+        await page.locator(selector).filter(has_text=re.compile(r"\S")).wait_for(timeout=timeout)
         
         result = await extract_elements(page, selector, attribute)
         await ctx.close()

@@ -1,3 +1,4 @@
+import re
 import asyncio
 from typing import List, Optional
 from playwright.async_api import Browser
@@ -29,7 +30,7 @@ async def run(
     for _ in range(3):
         await page.evaluate("window.scrollBy(0, 200)")
         await asyncio.sleep(0.8)
-    await page.wait_for_selector(selector, state="attached", timeout=timeout)
+    await page.locator(selector).filter(has_text=re.compile(r"\S")).wait_for(timeout=timeout)
 
     result = await extract_elements(page, selector, attribute)
     await ctx.close()

@@ -138,3 +138,29 @@ def scrape_href(
 	# _respect_robots(url, respect_robots, user_agent) # Not implemented yet
 	data = _run_sync(url, selector, "href", headless=headless, timeout=timeout*1000)
 	return ScrapeResult(url=url, selector=selector, result=data)
+
+def scrape_html(
+	url: str,
+	selector: str,
+	respect_robots: bool = True,
+	user_agent: str = "*",
+	headless: bool = True,
+	timeout: int = 30,
+	) -> ScrapeResult:
+	"""Return the outer HTML of all elements that match a CSS selector.
+
+	Args:
+		url: Page URL.
+		selector: CSS selector to match. For example, 'html' for the whole page.
+		respect_robots: Whether to respect robots.txt. (Not implemented yet)
+		user_agent: User agent to use for robots.txt check. (Not implemented yet)
+		headless: Whether to run the browser in headless mode.
+		timeout: Maximum time to wait for the page to load (in seconds).
+
+	Returns:
+		ScrapeResult containing the outer HTML strings of matching elements.
+	"""
+	_validate_inputs(url, selector)
+	# _respect_robots(url, respect_robots, user_agent) # Not implemented yet
+	data = _run_sync(url, selector, "html", headless=headless, timeout=timeout*1000)
+	return ScrapeResult(url=url, selector=selector, result=data)
