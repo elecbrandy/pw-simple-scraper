@@ -2,7 +2,7 @@ import re
 import asyncio
 from typing import List, Optional
 from playwright.async_api import Browser
-from ..utils import realistic_headers, extract_elements
+from ..utils import realistic_headers, extract_elements, wait_for_target
 
 MOBILE_UA = "Mozilla/5.0 (iPhone; CPU iPhone OS 17_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.1 Mobile/15E148 Safari/604.1"
 
@@ -30,8 +30,8 @@ async def run(
     for _ in range(3):
         await page.evaluate("window.scrollBy(0, 200)")
         await asyncio.sleep(0.8)
-    
-    await page.locator(selector).filter(has_text=re.compile(r"\S")).first.wait_for(timeout=timeout)
+
+    await wait_for_target(page, selector, attribute, timeout)
 
     result = await extract_elements(page, selector, attribute)
     await ctx.close()

@@ -1,3 +1,4 @@
+import re
 import random
 import asyncio
 from typing import List, Optional
@@ -59,3 +60,20 @@ async def extract_elements(page: Page, selector: str, attribute: Optional[str]) 
 
     # 결과를 정리해서 반환 (비어있거나 공백만 있는 값 제외)
     return [item.strip() for item in results if item and item.strip()]
+
+async def wait_for_target(
+    page: Page,
+    selector: str,
+    attribute: str | None,
+    timeout: int
+) -> None:
+    loc = page.locator(selector)
+    if attribute is None:
+        # non-empty 텍스트가 나올 때까지
+        await loc.filter(has_text=re.compile(r"\S")).first.wait_for(
+            state="visible",
+            timeout=timeout
+        )
+    else:
+        # 요소가 DOM 에 붙기만 하면 됨
+        await loc.first.wait_for(state="attached", timeout=timeout)

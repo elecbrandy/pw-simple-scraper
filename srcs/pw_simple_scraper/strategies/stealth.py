@@ -2,7 +2,7 @@ import re
 import random
 from typing import List, Optional
 from playwright.async_api import Browser
-from ..utils import UA_POOL, STEALTH_SCRIPT, realistic_headers, simulate_human, extract_elements
+from ..utils import UA_POOL, STEALTH_SCRIPT, realistic_headers, simulate_human, extract_elements, wait_for_target
 
 async def run(
         browser: Browser,
@@ -31,7 +31,7 @@ async def run(
     await page.goto(url, wait_until="domcontentloaded", timeout=timeout)
     await simulate_human(page)
 
-    await page.locator(selector).filter(has_text=re.compile(r"\S")).first.wait_for(timeout=timeout)
+    await wait_for_target(page, selector, attribute, timeout)
 
     result = await extract_elements(page, selector, attribute)
     await ctx.close()
