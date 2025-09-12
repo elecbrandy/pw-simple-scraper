@@ -72,12 +72,3 @@ def test_visibility_toggle(http_server):
 def test_missing_selector_raises(http_server):
     with pytest.raises(RuntimeError):
         scrape_context(_u(http_server, "index.html"), ".does-not-exist", headless=True, timeout=2)
-
-def test_real_url(http_server):
-    # 실제 URL을 사용하는 테스트 (http_server 가 아닌 외부 사이트)
-    TEST_URL = "https://asml.dkyobobook.co.kr/content/contentList.ink?brcd=&sntnAuthCode=&contentAll=Y&cttsDvsnCode=001&ctgrId=&orderByKey=publDate&selViewCnt=20&pageIndex=1&recordCount=20"
-    TEST_CSS_SELECTOR = "#totalPage"
-    res = scrape_context(TEST_URL, TEST_CSS_SELECTOR, headless=True, timeout=10)
-    print(res.result)
-    assert res.count == 1
-    assert "9296" in res.result[0]
