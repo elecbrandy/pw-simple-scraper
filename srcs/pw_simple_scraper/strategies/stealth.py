@@ -31,8 +31,8 @@ async def run(
     await page.goto(url, wait_until="domcontentloaded", timeout=timeout)
     await simulate_human(page)
 
-    await page.locator(selector).filter(has_text=re.compile(r"\S")).wait_for(timeout=timeout)
-    
+    await page.locator(selector).filter(has_text=re.compile(r"\S")).first.wait_for(timeout=timeout)
+
     result = await extract_elements(page, selector, attribute)
     await ctx.close()
     return result

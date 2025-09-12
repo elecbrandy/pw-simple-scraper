@@ -30,7 +30,8 @@ async def run(
     for _ in range(3):
         await page.evaluate("window.scrollBy(0, 200)")
         await asyncio.sleep(0.8)
-    await page.locator(selector).filter(has_text=re.compile(r"\S")).wait_for(timeout=timeout)
+    
+    await page.locator(selector).filter(has_text=re.compile(r"\S")).first.wait_for(timeout=timeout)
 
     result = await extract_elements(page, selector, attribute)
     await ctx.close()
