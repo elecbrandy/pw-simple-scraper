@@ -41,7 +41,7 @@ pip install pw-simple-scraper
 ## 사용법
 
 ``` python
-from pw_simple_scraper import scrape_context, scrape_href
+from pw_simple_scraper import scrape_context, scrape_attrs
 
 # 텍스트 추출
 res = scrape_context("https://example.com", "h3")
@@ -49,11 +49,12 @@ print(res.result)   # ['h3-type-content1', 'h3-type-content2', ...]
 print(res.count)    # n (스크래핑 갯수)
 
 # 링크 추출
-links = scrape_href("https://example.com", "a")
+links = scrape_attrs("https://example.com", "a", "href")
 print(links.result) # ['https://www.iana.org/domains/example', ...]
 
 # timeout 옵션 부여 (기본값 30초)
 scrape_context("https://example.com", "something", timeout=10) # 10초
+links = scrape_attrs("https://example.com", "a", "href", timeout=20) # 20초
 ```
 
 #### 결과는 `ScrapeResult` 객체
@@ -77,7 +78,7 @@ class ScrapeResult:
     - `python -m playwright install chromium` 으로 브라우저를 꼭 설치해야 합니다. (리눅스 옵션 주의)
 
 - **RuntimeError: All strategies failed 오류**
-    - 셀렉터가 존재하지 않거나 로딩이 느릴 수 있습니다. **셀렉터를 다시 한번 확인** 하고, `timeout`을 좀 늘려보세요. 
+    - 셀렉터가 존재하지 않거나 로딩이 느릴 수 있습니다. **셀렉터를 다시 한번 확인** 하고, `timeout`을 좀 늘려보세요..!
 
 - **iframe 내부 스크래핑**
     - 추후 지원 예정입니다.

@@ -43,19 +43,20 @@ pip install pw-simple-scraper
 ## Usage
 
 ```python
-from pw-simple_scraper import scrape_context, scrape_href
+from pw-simple_scraper import scrape_context, scrape_attrs
 
 # Extract text
 res = scrape_context("https://example.com", "h3")
 print(res.result)   # ['h3-type-content1', 'h3-type-content2', ...]
 print(res.count)    # n (number of scraped elements)
 
-# Extract links
-links = scrape_href("https://example.com", "a")
+# Extract links by Attribute (herf ...)
+links = scrape_attr("https://example.com", "a", "herf")
 print(links.result) # ['https://www.iana.org/domains/example', ...]
 
 # Apply timeout option (default: 30 seconds)
 scrape_context("https://example.com", "something", timeout=10) # 10 seconds
+links = scrape_attr("https://example.com", "a", "herf", timeout=20) # 20 seconds
 ```
 
 #### Result is a `ScrapeResult` object
