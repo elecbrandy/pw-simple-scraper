@@ -107,60 +107,21 @@ def scrape_context(
 	data = _run_sync(url, selector, None, headless=headless, timeout=timeout*1000)
 	return ScrapeResult(url=url, selector=selector, result=data)
 
+def scrape_attrs(
+    url: str,
+    selector: str,
+    attr: str,
+    respect_robots: bool = True,
+    user_agent: str = "*",
+    headless: bool = True,
+    timeout: int = 30,
+) -> ScrapeResult:
+    """Return a specific attribute of all elements that match a CSS selector."""
+    _validate_inputs(url, selector)
+    
+    if not isinstance(attr, str) or not attr.strip():
+        raise ValueError("Attribute 'attr' must be a non-empty string.")
 
-def scrape_href(
-	url: str,
-	selector: str,
-	respect_robots: bool = True,
-	user_agent: str = "*",
-	headless: bool = True,
-	timeout: int = 30,
-	) -> ScrapeResult:
-	"""Return the href attributes of all elements that match a CSS selector.
-
-	Uses Playwright to open the page, tries a few safe methods,
-	and collects each element’s href attribute.
-
-	Args:
-		url: Page URL.
-		selector: CSS selector to match.
-		respect_robots: Whether to respect robots.txt. (Not implemented yet)
-		user_agent: User agent to use for robots.txt check. (Not implemented yet)
-		headless: Whether to run the browser in headless mode.
-		timeout: Maximum time to wait for the page to load (in seconds).
-
-	Returns:
-		ScrapeResult
-			* containing the non-empty href strings, URL, and other metadata.
-			* elements without an href (or with an empty href) are skipped and not included.
-	"""
-	_validate_inputs(url, selector)
-	# _respect_robots(url, respect_robots, user_agent) # Not implemented yet
-	data = _run_sync(url, selector, "href", headless=headless, timeout=timeout*1000)
-	return ScrapeResult(url=url, selector=selector, result=data)
-
-def scrape_html(
-	url: str,
-	selector: str,
-	respect_robots: bool = True,
-	user_agent: str = "*",
-	headless: bool = True,
-	timeout: int = 30,
-	) -> ScrapeResult:
-	"""Return the outer HTML of all elements that match a CSS selector.
-
-	Args:
-		url: Page URL.
-		selector: CSS selector to match. For example, 'html' for the whole page.
-		respect_robots: Whether to respect robots.txt. (Not implemented yet)
-		user_agent: User agent to use for robots.txt check. (Not implemented yet)
-		headless: Whether to run the browser in headless mode.
-		timeout: Maximum time to wait for the page to load (in seconds).
-
-	Returns:
-		ScrapeResult containing the outer HTML strings of matching elements.
-	"""
-	_validate_inputs(url, selector)
-	# _respect_robots(url, respect_robots, user_agent) # Not implemented yet
-	data = _run_sync(url, selector, "html", headless=headless, timeout=timeout*1000)
-	return ScrapeResult(url=url, selector=selector, result=data)
+    clean_attr = attr.strip()
+    data = _run_sync(url, selector, clean_attr, headless=headless, timeout=timeout*1000)
+    return ScrapeResult(url=url, selector=selector, result=data)

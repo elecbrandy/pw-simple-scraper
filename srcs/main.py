@@ -4,7 +4,7 @@ from pathlib import Path
 current_dir = Path(__file__).parent
 sys.path.append(str(current_dir))
 
-from pw_simple_scraper import scrape_html, scrape_context, scrape_href, ScrapeResult
+from pw_simple_scraper import scrape_html, scrape_context, ScrapeResult
 
 # test
 

@@ -1,4 +1,4 @@
-from .core import scrape_context, scrape_href, scrape_html
+from .core import scrape_context, scrape_attrs
 from .model import ScrapeResult
 
-__all__ = ["scrape_context", "scrape_href", "scrape_html", "ScrapeResult"]
+__all__ = ["scrape_context" , "scrape_attrs", "ScrapeResult"]

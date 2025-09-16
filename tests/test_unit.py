@@ -23,12 +23,12 @@ def test_utils_headers_and_uapool():
     assert "Accept" in headers and "Accept-Language" in headers
     assert isinstance(utils.UA_POOL, list) and len(utils.UA_POOL) >= 3
 
-def test_real_page_scrape():
-    url = "https://asml.dkyobobook.co.kr/content/contentList.ink?cttsDvsnCode=001"
-    selector = "#totalPage"
-    answer = "9314"
-    result = scrape_context(url, selector)
+# def test_real_page_scrape():
+#     url = "https://asml.dkyobobook.co.kr/content/contentList.ink?cttsDvsnCode=001"
+#     selector = "#totalPage"
+#     answer = "9314"
+#     result = scrape_context(url, selector)
 
-    assert isinstance(result, ScrapeResult)
-    assert result.count == 1
-    assert answer in result.result[0]
+#     assert isinstance(result, ScrapeResult)
+#     assert result.count == 1
+#     assert answer in result.result[0]

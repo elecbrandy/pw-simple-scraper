@@ -1,5 +1,5 @@
 import pytest
-from pw_simple_scraper import scrape_context, scrape_href
+from pw_simple_scraper import scrape_context, scrape_attrs
 
 # 이 파일 전체를 e2e로 표시 (브라우저 실행 필요)
 pytestmark = pytest.mark.e2e
@@ -14,7 +14,7 @@ def test_index_list_extraction(http_server):
     assert all(isinstance(x, str) and x for x in res.result)
 
 def test_links_href_extraction(http_server):
-    res = scrape_href(_u(http_server, "links.html"), "a.nav", headless=True, timeout=5)
+    res = scrape_attrs(_u(http_server, "links.html"), "a.nav", "href", headless=True, timeout=5)
     assert res.count == 2
     assert set(res.result) == {"/a.html", "/b.html"}
 
@@ -30,12 +30,12 @@ def test_dynamic_list_insert(http_server):
 
 def test_dynamic_href_added_later(http_server):
     # 파일명이 dynamic_herf.html 임에 주의 (오타 그대로 사용)
-    res = scrape_href(_u(http_server, "dynamic_href.html"), "a.later", headless=True, timeout=5)
+    res = scrape_attrs(_u(http_server, "dynamic_href.html"), "a.later", "href", headless=True, timeout=5)
     assert res.result == ["/a.html"]
 
 def test_attrs_mixed_href_filter(http_server):
     # 빈 문자열/공백/누락된 href는 제외, javascript:void(0)은 포함
-    res = scrape_href(_u(http_server, "attrs_mixed.html"), ".nav", headless=True, timeout=5)
+    res = scrape_attrs(_u(http_server, "attrs_mixed.html"), ".nav", "href", headless=True, timeout=5)
     assert set(res.result) == {"/ok.html", "javascript:void(0)"}
 
 def test_empty_text_is_filtered_and_empty_href_ignored(http_server):
@@ -43,7 +43,7 @@ def test_empty_text_is_filtered_and_empty_href_ignored(http_server):
     ctx = scrape_context(_u(http_server, "empty.html"), ".has-text", headless=True, timeout=5)
     assert ctx.result == ["Not empty"]
     # href 속성이 비어있는 경우 결과에서 제외
-    hrefs = scrape_href(_u(http_server, "empty.html"), "a.maybe-href", headless=True, timeout=5)
+    hrefs = scrape_attrs(_u(http_server, "empty.html"), "a.maybe-href", "href", headless=True, timeout=5)
     assert hrefs.result == []
 
 def test_encoding_utf8_paragraphs(http_server):
@@ -62,7 +62,7 @@ def test_longlist_count_and_edges(http_server):
 def test_nested_headlines_text_and_links(http_server):
     txt = scrape_context(_u(http_server, "nested.html"), ".card h2 .headline", headless=True, timeout=5)
     assert txt.result == ["Alpha", "Beta"]
-    hrefs = scrape_href(_u(http_server, "nested.html"), ".card h2 .headline", headless=True, timeout=5)
+    hrefs = scrape_attrs(_u(http_server, "nested.html"), ".card h2 .headline", "href", headless=True, timeout=5)
     assert hrefs.result == ["/a.html", "/b.html"]
 
 def test_visibility_toggle(http_server):
