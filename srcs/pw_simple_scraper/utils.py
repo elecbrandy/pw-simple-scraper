@@ -1,11 +1,11 @@
 import re
 import random
 import asyncio
-from typing import List, Optional
+from typing import Optional
 from urllib.parse import urlparse, urlunparse
 from playwright.async_api import Page
 
-UA_POOL: List[str] = [
+UA_POOL: list[str] = [
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
     "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
@@ -39,41 +39,3 @@ async def simulate_human(page: Page):
         await page.mouse.wheel(0, random.randint(150, 400))
         await asyncio.sleep(random.uniform(0.5, 1.2))
     await asyncio.sleep(random.uniform(0.3, 0.8)) 
-
-import random
-import asyncio
-from typing import List, Optional
-from playwright.async_api import Page
-
-# ... (파일의 다른 부분은 그대로 둡니다) ...
-
-async def extract_elements(page: Page, selector: str, attribute: Optional[str]) -> List[str]:
-    locator = page.locator(selector)
-    
-    results: List[str] = []
-    if attribute == "html":
-        results = await locator.evaluate_all("els => els.map(el => el.outerHTML)")
-    elif attribute:
-        results = await locator.evaluate_all(f"(els, attr) => els.map(el => el.getAttribute(attr))", attribute)
-    else:
-        results = await locator.all_text_contents()
-
-    # 결과를 정리해서 반환 (비어있거나 공백만 있는 값 제외)
-    return [item.strip() for item in results if item and item.strip()]
-
-async def wait_for_target(
-    page: Page,
-    selector: str,
-    attribute: str | None,
-    timeout: int
-) -> None:
-    loc = page.locator(selector)
-    if attribute is None:
-        # non-empty 텍스트가 나올 때까지
-        await loc.filter(has_text=re.compile(r"\S")).first.wait_for(
-            state="visible",
-            timeout=timeout
-        )
-    else:
-        # 요소가 DOM 에 붙기만 하면 됨
-        await loc.first.wait_for(state="attached", timeout=timeout)

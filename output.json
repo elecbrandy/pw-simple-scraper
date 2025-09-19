@@ -1,0 +1,60 @@
+{
+  "basic": {
+    "title": "Quotes to Scrape",
+    "first_quote": "“The world as we have created it is a process of our thinking. It cannot be changed without changing our thinking.”",
+    "quotes_count": 10,
+    "first_author_link": "/author/Albert-Einstein"
+  },
+  "table": [
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {}
+  ],
+  "images_links": {
+    "images": [
+      "https://books.toscrape.com/media/cache/2c/da/2cdad67c44b002e7ead0cc35693c0e8b.jpg",
+      "https://books.toscrape.com/media/cache/26/0c/260c6ae16bce31c8f8c95daddd9f4a1c.jpg",
+      "https://books.toscrape.com/media/cache/3e/ef/3eef99c9d9adef34639f510662022830.jpg",
+      "https://books.toscrape.com/media/cache/32/51/3251cf3a3412f53f339e42cac2134093.jpg",
+      "https://books.toscrape.com/media/cache/be/a5/bea5697f2534a2f86a3ef27b5a8c12a6.jpg"
+    ],
+    "book_links": [
+      "https://books.toscrape.com/catalogue/a-light-in-the-attic_1000/index.html",
+      "https://books.toscrape.com/catalogue/tipping-the-velvet_999/index.html",
+      "https://books.toscrape.com/catalogue/soumission_998/index.html",
+      "https://books.toscrape.com/catalogue/sharp-objects_997/index.html",
+      "https://books.toscrape.com/catalogue/sapiens-a-brief-history-of-humankind_996/index.html"
+    ]
+  },
+  "evaluate": [
+    {
+      "title": "A Light in the Attic",
+      "price": "£51.77",
+      "inStock": true
+    },
+    {
+      "title": "Tipping the Velvet",
+      "price": "£53.74",
+      "inStock": true
+    },
+    {
+      "title": "Soumission",
+      "price": "£50.10",
+      "inStock": true
+    },
+    {
+      "title": "Sharp Objects",
+      "price": "£47.82",
+      "inStock": true
+    },
+    {
+      "title": "Sapiens: A Brief History of Humankind",
+      "price": "£54.23",
+      "inStock": true
+    }
+  ]
+}

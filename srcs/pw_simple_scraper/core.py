@@ -1,127 +1,83 @@
-import asyncio
-import importlib
 import random
-from typing import List, Optional
-from .model import ScrapeResult
+from contextlib import asynccontextmanager
+from typing import AsyncGenerator, Optional
+from playwright.async_api import async_playwright, Playwright, Browser, Page
 
-from playwright.async_api import async_playwright, Browser
 from .browser import launch_chromium
+from .utils import UA_POOL, STEALTH_SCRIPT, realistic_headers
 
-# strategies to try in order
-_STRATEGY_PATHS = [
-	"pw_simple_scraper.strategies.stealth",
-	"pw_simple_scraper.strategies.mobile",
-	"pw_simple_scraper.strategies.proxy",
-]
-
-async def _run_strategies(
-		url: str,
-		selector: str,
-		attribute: Optional[str],
-		headless: bool,
-		timeout: int,
-	) -> List[str]:
-	last_err: Optional[Exception] = None
-	browser: Optional[Browser] = None
-
-	# Start Playwright
-	async with async_playwright() as pw:
-		try:
-			browser = await launch_chromium(pw, headless=headless, extra_args=[
-				"--disable-features=TranslateUI", "--mute-audio"
-			])
-			# Try each strategy in order
-			for i, mod_path in enumerate(_STRATEGY_PATHS):
-				strat = importlib.import_module(mod_path)
-				try:
-					return await strat.run(
-						browser, url, selector, attribute, timeout=timeout
-					)
-				except Exception as e:
-					last_err = e
-					await asyncio.sleep((i + 1) * 2 + random.uniform(1, 3))
-		finally:
-			# Ensure the browser is closed
-			if browser:
-				await browser.close()
-	raise RuntimeError(f"All strategies failed: {last_err}")
-
-def _run_sync(
-		url: str,
-		selector: str,
-		attribute: Optional[str],
-		headless: bool,
-		timeout: int,
-	) -> List[str]:
-	try:
-		# Check if we are already in an event loop
-		loop = asyncio.get_running_loop()
-		import nest_asyncio; nest_asyncio.apply()
-		return loop.run_until_complete(_run_strategies(url, selector, attribute, headless, timeout))
-	except RuntimeError:
-		# If not, create a new event loop
-		return asyncio.run(_run_strategies(url, selector, attribute, headless, timeout))
-
-def _validate_inputs(url: str, selector: str) -> None:
-	if not isinstance(url, str):
-		raise TypeError("URL must be a string")
-	if not url:
-		raise ValueError("URL must not be empty")
-	if not isinstance(selector, str):
-		raise TypeError("Selector must be a string")
-	if not selector:
-		raise ValueError("Selector must not be empty")
-	
-def _respect_robots(url: str, respect_robots: bool, robots_user_agent: str) -> None:
-	# will be developed in the future
-	return
-
-def scrape_context(
-	url: str,
-	selector: str,
-	respect_robots: bool = True,
-	user_agent: str = "*",
-	headless: bool = True,
-	timeout: int = 30,
-	) -> ScrapeResult:
-	"""Return the text of all elements that match a CSS selector.
-
-	Uses Playwright to open the page, tries a few safe methods,
-	and collects each element’s inner text (trimmed).
-
-	Args:
-		url: Page URL.
-		selector: CSS selector to match.
-		respect_robots: Whether to respect robots.txt. (Not implemented yet)
-		user_agent: User agent to use for robots.txt check. (Not implemented yet)
-		headless: Whether to run the browser in headless mode.
-		timeout: Maximum time to wait for the page to load (in seconds).
-
-	Returns:
-		ScrapeResult
-			* containing the texts, URL, and other metadata.
-			* elements with no text content are skipped (only non-empty strings are returned).
-	"""
-	_validate_inputs(url, selector)
-	# _respect_robots(url, respect_robots, user_agent) # Not implemented yet
-	data = _run_sync(url, selector, None, headless=headless, timeout=timeout*1000)
-	return ScrapeResult(url=url, selector=selector, result=data)
-
-def scrape_attrs(
-    url: str,
-    selector: str,
-    attr: str,
-    respect_robots: bool = True,
-    user_agent: str = "*",
-    headless: bool = True,
-    timeout: int = 30,
-) -> ScrapeResult:
-    """Return a specific attribute of all elements that match a CSS selector."""
-    _validate_inputs(url, selector)
+class PlaywrightScraper:
+    def __init__(self, headless: bool = True, timeout: int = 30):
+        self.headless = headless 
+        self.timeout = timeout
+        self.playwright: Optional[Playwright] = None
+        self.browser: Optional[Browser] = None
     
-    if not isinstance(attr, str) or not attr.strip():
-        raise ValueError("Attribute 'attr' must be a non-empty string.")
+    async def launch(self) -> None:
+        """
+        Launches the Playwright browser.
+        Avoid relaunching if already connected
 
-    clean_attr = attr.strip()
-    data = _run_sync(url, selector, clean_attr, headless=headless, timeout=timeout*1000)
-    return ScrapeResult(url=url, selector=selector, result=data)
+        Arg:
+            None
+        
+        Return:
+            None
+        """
+        if self.browser and self.browser.is_connected():
+            return
+
+        self.playwright = await async_playwright().start()
+        self.browser = await launch_chromium(self.playwright, headless=self.headless)
+
+    async def close(self) -> None:
+        """
+        Closes the browser and stops the Playwright instance.
+
+        Arg:
+            None
+        Return:
+            None
+        """
+        if self.browser:
+            await self.browser.close()
+            self.browser = None
+        if self.playwright:
+            await self.playwright.stop()
+            self.playwright = None
+
+    @asynccontextmanager
+    async def get_page(self, url: str) -> AsyncGenerator[Page, None]:
+        """
+        Provides a Playwright page context for the given URL.
+        Creates a new page, navigates to the URL, and ensures cleanup.
+
+        Arg:
+            url (str): The URL to navigate to.
+        Yields:
+            AsyncGenerator[Page, None]: An async generator yielding the Playwright page.
+        """
+        if not self.browser or not self.browser.is_connected():
+            await self.launch()
+
+        context = await self.browser.new_context(
+            user_agent=random.choice(UA_POOL),
+            extra_http_headers=realistic_headers(),
+            viewport={"width": 1280, "height": 720},
+        )
+
+        try:
+            await context.add_init_script(STEALTH_SCRIPT)
+            page = await context.new_page()
+            await page.goto(url, wait_until="domcontentloaded", timeout=self.timeout * 1000)
+            # await simulate_human(page)
+            yield page
+        finally:
+            await context.close()
+        
+    async def __aenter__(self):
+        await self.launch()
+        return self
+
+    async def __aexit__(self, exc_type, exc_val, exc_tb):
+        await self.close()
