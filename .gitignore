@@ -10,3 +10,17 @@ build/
 *.sh
 *.txt
 *.log
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.svg
+*.ico
+*.pdf
+*.zip
+*.tar.gz
+*.egg-info/
+*.sqlite3
+*.db
+*.bak
+*.json
