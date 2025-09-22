@@ -86,6 +86,8 @@ async def main():
 
 > Not sure how to handle the `Page` object returned by `get_page`? -> [Playwright Method Reference](#5-playwright-method-reference)
 
+<br>
+
 ### 4-1. Extract title / text / attributes
 
 #### 🖥️ Code Example
@@ -111,6 +113,8 @@ if __name__ == "__main__":
     asyncio.run(main())
 ```
 
+<br>
+
 #### ⬇️ Example Output
 
 ``` bash
@@ -119,6 +123,9 @@ First Quote: “The world as we have created it is a process of our thinking. It
 Quote List (first 3): ["The world as we have created it is a process of our thinking...", "It is our choices, Harry, that show what we truly are...", "There are only two ways to live your life..."]
 First Author Link: /author/Albert-Einstein
 ```
+
+<br>
+<br>
 
 ### 4-2. Images & links — collect absolute paths
 
@@ -149,6 +156,8 @@ if __name__ == "__main__":
     asyncio.run(main())
 ```
 
+<br>
+
 #### ⬇️ Example Output
 
 ``` bash
@@ -167,6 +176,9 @@ Book Links (5): [
   'https://books.toscrape.com/catalogue/sapiens-a-brief-history-of-humankind_996/index.html'
 ]
 ```
+
+<br>
+<br>
 
 ### 4-3. Evaluate JSON — convert DOM to JSON
 
@@ -192,6 +204,8 @@ async def main():
 if __name__ == "__main__":
     asyncio.run(main())
 ```
+
+<br>
 
 #### ⬇️ Example Output
 
