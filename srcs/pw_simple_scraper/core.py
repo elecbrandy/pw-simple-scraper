@@ -1,7 +1,7 @@
 import random
 from contextlib import asynccontextmanager
 from typing import AsyncGenerator, Optional
-from playwright.async_api import async_playwright, Playwright, Browser, Page
+from playwright.async_api import async_playwright, Playwright, Browser, Page, Response
 
 from .browser import launch_chromium
 from .utils import UA_POOL, STEALTH_SCRIPT, realistic_headers
@@ -47,7 +47,7 @@ class PlaywrightScraper:
             self.playwright = None
 
     @asynccontextmanager
-    async def get_page(self, url: str) -> AsyncGenerator[Page, None]:
+    async def get_page(self, url: str) -> AsyncGenerator[tuple[Page, Response], None]:
         """
         Provides a Playwright page context for the given URL.
         Creates a new page, navigates to the URL, and ensures cleanup.
@@ -55,7 +55,7 @@ class PlaywrightScraper:
         Arg:
             url (str): The URL to navigate to.
         Yields:
-            AsyncGenerator[Page, None]: An async generator yielding the Playwright page.
+            AsyncGenerator[tuple[Page, Response], None]: An async generator yielding the Playwright page and the response.
         """
         if not self.browser or not self.browser.is_connected():
             await self.launch()
@@ -69,9 +69,9 @@ class PlaywrightScraper:
         try:
             await context.add_init_script(STEALTH_SCRIPT)
             page = await context.new_page()
-            await page.goto(url, wait_until="domcontentloaded", timeout=self.timeout * 1000)
+            response = await page.goto(url, wait_until="domcontentloaded", timeout=self.timeout * 1000)
             # await simulate_human(page)
-            yield page
+            yield page, response
         finally:
             await context.close()
         

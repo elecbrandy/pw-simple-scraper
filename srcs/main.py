@@ -13,7 +13,8 @@ example_results = {}
 # 1. basic
 async def example_basic():
     async with PlaywrightScraper() as scraper:
-        async with scraper.get_page("https://quotes.toscrape.com/") as page:
+        async with scraper.get_page("https://quotes.toscrape.com/") as (page, response):
+            print(f"example_basic status: {response.status}")
             title = await page.title()
             first_quote = await page.locator("span.text").first.text_content()
             quotes = await page.locator("span.text").all_text_contents()
@@ -29,7 +30,8 @@ async def example_basic():
 # 2. images & links
 async def example_images_links():
     async with PlaywrightScraper() as scraper:
-        async with scraper.get_page("https://books.toscrape.com/") as page:
+        async with scraper.get_page("https://books.toscrape.com/") as (page, response):
+            print(f"example_images_links status: {response.status}")
             img_urls = await page.locator("article.product_pod img").evaluate_all(
                 "els => els.map(el => el.getAttribute('src'))"
             )
@@ -49,7 +51,8 @@ async def example_images_links():
 # 3. evaluate JSON
 async def example_evaluate():
     async with PlaywrightScraper() as scraper:
-        async with scraper.get_page("https://books.toscrape.com/") as page:
+        async with scraper.get_page("https://books.toscrape.com/") as (page, response):
+            print(f"example_evaluate status: {response.status}")
             cards = page.locator("article.product_pod")
             items = await cards.evaluate_all("""
                 els => els.map(el => ({

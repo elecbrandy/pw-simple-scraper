@@ -24,7 +24,7 @@
 ## 1. 주요기능
 - [Playwright](https://playwright.dev) 을 기반으로 한 스크래퍼 라이브러리 입니다.
 - `async with` 구문을 통해 브라우저와 페이지의 생명 주기를 자동으로 관리합니다.
-- Playwright 객체를 반환하기 때문에, _**Playwright이 제공하는 강력한 모든 기능을 그대로 사용**_ 할 수 있습니다!
+- Playwright `Page`와 `Response` 객체를 반환하기 때문에, _**Playwright이 제공하는 강력한 모든 기능을 그대로 사용**_ 할 수 있습니다!
 - ⚡️빠름⚡️
 
 <br>
@@ -60,9 +60,9 @@ pip install pw-simple-scraper
 
 1. `async with PlaywrightScraper() as scraper`
     - 스크래퍼 인스턴스를 만들어줍시다.
-2. `async with scraper.get_page("http://www.example.com/") as page:`
-    - get_page 메소드를 통해 페이지 컨텍스트를 가져옵시다.
-3. 이제 `page` 요소에 Playwright의 다양한 기능을 직접 사용할 수 있습니다.
+2. `async with scraper.get_page("http://www.example.com/") as (page, response):`
+    - `get_page` 메소드를 통해 페이지 컨텍스트(`page`)와 응답(`response`)을 가져옵니다.
+3. 이제 `page` 객체로 Playwright의 다양한 스크래핑 기능을, `response` 객체로 응답 상태(`response.status`) 등을 확인할 수 있습니다.
 
 <br>
 
@@ -74,9 +74,13 @@ from pw_simple_scraper import PlaywrightScraper
 async def main():
     # 스크레퍼 인스턴스 생성
     async with PlaywrightScraper() as scraper:
-        # get_page()를 통해 페이지 컨텍스트를 얻음
-        async with scraper.get_page("http://www.example.com/") as page:
+        # get_page()를 통해 페이지와 응답 컨텍스트를 얻음
+        async with scraper.get_page("http://www.example.com/") as (page, response):
+            # response.status 로 응답 코드 확인
+            print(f"Status: {response.status}")
+
             # >>>> 이 블록에서 page를 조작하면 됩니다! <<<<
+            print(await page.title())
 
 ```
 
@@ -97,7 +101,10 @@ from pw_simple_scraper import PlaywrightScraper
 
 async def main():
     async with PlaywrightScraper() as scraper:
-        async with scraper.get_page("https://quotes.toscrape.com/") as page:
+        async with scraper.get_page("https://quotes.toscrape.com/") as (page, response):
+            print(f"요청 URL: {response.url}")
+            print(f"응답 상태: {response.status}")
+
             title = await page.title()
             first_quote = await page.locator("span.text").first.text_content()
             quotes = await page.locator("span.text").all_text_contents()
@@ -115,6 +122,8 @@ if __name__ == "__main__":
 #### ⬇️ 결과 예시
 
 ``` bash
+요청 URL: https://quotes.toscrape.com/
+응답 상태: 200
 페이지 제목: Quotes to Scrape
 첫 번째 명언: “The world as we have created it is a process of our thinking. It cannot be changed without changing our thinking.”
 명언 리스트 (앞 3개): ["The world as we have created it is a process of our thinking...", "It is our choices, Harry, that show what we truly are...", "There are only two ways to live your life..."]
@@ -132,7 +141,7 @@ from pw_simple_scraper import PlaywrightScraper
 
 async def main():
     async with PlaywrightScraper() as scraper:
-        async with scraper.get_page("https://books.toscrape.com/") as page:
+        async with scraper.get_page("https://books.toscrape.com/") as (page, response):
             img_urls = await page.locator("article.product_pod img").evaluate_all(
                 "els => els.map(el => el.getAttribute('src'))"
             )
@@ -181,7 +190,7 @@ from pw_simple_scraper import PlaywrightScraper
 
 async def main():
     async with PlaywrightScraper() as scraper:
-        async with scraper.get_page("https://books.toscrape.com/") as page:
+        async with scraper.get_page("https://books.toscrape.com/") as (page, response):
             cards = page.locator("article.product_pod")
             items = await cards.evaluate_all("""
                 els => els.map(el => ({
